@@ -177,6 +177,30 @@ def create_app(database: str | None = None) -> FastAPI:
     def forecast(plant_id: str, start_day: str, days: int = 7):
         return service.forecast.horizon(plant_id, start_day, days)
 
+    @app.post("/reallocations", status_code=201)
+    def create_reallocation(payload: Payload):
+        return service.create_reallocation(payload.model_dump())
+
+    @app.get("/reallocations")
+    def list_reallocations(status: str | None = None):
+        return service.reallocation.list_plans(status)
+
+    @app.get("/reallocations/{plan_id}")
+    def get_reallocation(plan_id: str):
+        return service.reallocation.get(plan_id)
+
+    @app.get("/reallocations/{plan_id}/evaluation")
+    def evaluate_reallocation(plan_id: str):
+        return service.evaluate_reallocation(plan_id)
+
+    @app.post("/reallocations/{plan_id}/withdraw", status_code=201)
+    def withdraw_reallocation(plan_id: str, payload: Payload):
+        return service.withdraw_reallocation(plan_id, payload.model_dump())
+
+    @app.get("/plants/{plant_id}/spare-capacity")
+    def spare_capacity(plant_id: str, from_day: str, to_day: str):
+        return service.reallocation.spare_capacity(plant_id, from_day, to_day)
+
     @app.get("/lots/{lot_id}/trace")
     def trace_lot(lot_id: str):
         return service.trace.lot(lot_id)

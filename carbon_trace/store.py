@@ -122,6 +122,27 @@ CREATE TABLE IF NOT EXISTS commitments (
     shipment_id TEXT NOT NULL UNIQUE REFERENCES shipments(shipment_id),
     quantity TEXT NOT NULL, accepted_revision INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS reallocation_plans (
+    plan_id TEXT PRIMARY KEY,
+    requesting_plant_id TEXT NOT NULL REFERENCES plants(plant_id),
+    from_day TEXT NOT NULL, to_day TEXT NOT NULL, note TEXT,
+    status TEXT NOT NULL CHECK(status IN ('active','withdrawn')),
+    base_revision INTEGER NOT NULL, created_revision INTEGER NOT NULL,
+    withdrawn_revision INTEGER,
+    basis_digest TEXT NOT NULL, orders_digest TEXT NOT NULL,
+    incidents_digest TEXT NOT NULL, capacity_digest TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS reallocation_items (
+    plan_id TEXT NOT NULL REFERENCES reallocation_plans(plan_id),
+    item_seq INTEGER NOT NULL,
+    order_id TEXT NOT NULL REFERENCES orders(order_id),
+    supplier_plant_id TEXT NOT NULL REFERENCES plants(plant_id),
+    grade TEXT NOT NULL, supply_local_day TEXT NOT NULL, quantity TEXT NOT NULL,
+    PRIMARY KEY(plan_id,item_seq)
+);
+CREATE INDEX IF NOT EXISTS reallocation_items_supply
+    ON reallocation_items(supplier_plant_id,supply_local_day);
+CREATE INDEX IF NOT EXISTS reallocation_items_order ON reallocation_items(order_id);
 """
 
 

@@ -44,6 +44,8 @@ class Trace:
                      "specification": ("specifications", "spec_id"), "lot": ("lots", "lot_id"),
                      "assay": ("assays", "assay_id"), "shipment": ("shipments", "shipment_id"),
                      "order": ("orders", "order_id"), "reservation": ("reservations", "reservation_id"),
+                     "reallocation_plan": ("reallocation_plans", "plan_id"),
+                     "reallocation_withdraw": ("reallocation_plans", "plan_id"),
                      "source_policy": ("source_policies", "source")}.get(kind)
             entity = None
             if table:

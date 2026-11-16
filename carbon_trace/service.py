@@ -6,6 +6,7 @@ from .incidents import Incidents
 from .orders import Orders
 from .forecast import Forecast
 from .delivery import Delivery
+from .reallocation import Reallocation
 from .reconciliation import Reconciliation
 from .trace import Trace
 from .publication import Publication
@@ -24,6 +25,7 @@ class Service:
         self.orders = Orders(self.store)
         self.forecast = Forecast(self.store)
         self.delivery = Delivery(self.store)
+        self.reallocation = Reallocation(self.store)
         self.reconciliation = Reconciliation(self.store)
         self.trace = Trace(self.store)
         self.analytics = Analytics(self.store)
@@ -93,3 +95,12 @@ class Service:
         payload = mapping(payload)
         return self.incidents.close(incident_id, payload.get("ended_at"),
                                     payload.get("expected_revision"))
+
+    def create_reallocation(self, payload: dict) -> dict:
+        return self.reallocation.create(mapping(payload))
+
+    def withdraw_reallocation(self, plan_id: str, payload: dict) -> dict:
+        return self.reallocation.withdraw(plan_id, mapping(payload))
+
+    def evaluate_reallocation(self, plan_id: str) -> dict:
+        return self.reallocation.evaluate(plan_id)
